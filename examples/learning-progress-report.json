@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "scope": "learning progression (fictional example)",
+  "mode": "audit",
+  "summary": "The completion controller coordinates progress and rewards, which may be vulnerable to retries.",
+  "workflows": [
+    {
+      "name": "Complete a learning level",
+      "promise": "A valid completion should update progress and award points at most once.",
+      "entry_point": "src/level-controller.ts",
+      "trace": [
+        {"path": "src/level-controller.ts", "symbol": "completeLevel", "role": "request entry and sequencing"},
+        {"path": "src/progress-service.ts", "symbol": "updateProgress", "role": "persist completion"},
+        {"path": "src/reward-service.ts", "symbol": "awardPoints", "role": "persist rewards"}
+      ],
+      "owner": "Unclear: controller currently coordinates the workflow",
+      "change_entry_point": "src/level-controller.ts:completeLevel",
+      "invariants": [
+        {"statement": "Retries never duplicate points", "status": "missing", "evidence": []},
+        {"statement": "Incomplete writes are never exposed", "status": "unknown", "evidence": []}
+      ],
+      "unknowns": ["Database transaction support", "Concurrency behavior"]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "C1",
+      "title": "Completion coordination leaks into controller",
+      "recommendation": "investigate",
+      "reason": "Controller owns sequencing for stateful progress and reward effects.",
+      "counterargument": "Existing components may already enforce an idempotency key or atomic transaction.",
+      "evidence": [
+        {"path": "src/level-controller.ts", "symbol": "completeLevel", "detail": "Calls updateProgress then awardPoints"}
+      ],
+      "possible_contract": "completeLevel(requestId, childId, levelId, answers) -> CompletionResult",
+      "test_implication": "Add a boundary/integration retry test before changing module ownership.",
+      "next_step": "Inspect the database transaction and idempotency behavior."
+    }
+  ],
+  "verification": {
+    "checks": [
+      {"command": "not executed (illustrative)", "status": "not_run", "details": "This is a fictional sample, not a real repository."}
+    ],
+    "unverified": ["Actual runtime behavior", "Test availability"]
+  },
+  "next_step": "Check transaction semantics and add a retry test before choosing to refactor."
+}

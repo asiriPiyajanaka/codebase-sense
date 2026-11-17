@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codebase Sense"
+  short_description: "Keep architecture understandable as agents ship code"
+  default_prompt: "Use $codebase-sense to trace a critical workflow, assess its contracts and tests, and identify the smallest evidence-backed architecture improvement without changing code."

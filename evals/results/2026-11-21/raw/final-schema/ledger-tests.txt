@@ -1,0 +1,10 @@
+test_conflicting_retry (test_ledger.LedgerTests.test_conflicting_retry) ... ok
+test_domain_validation (test_ledger.LedgerTests.test_domain_validation) ... ok
+test_insufficient_funds (test_ledger.LedgerTests.test_insufficient_funds) ... ok
+test_missing_receiver_rolls_back (test_ledger.LedgerTests.test_missing_receiver_rolls_back) ... ok
+test_transfer_and_retry (test_ledger.LedgerTests.test_transfer_and_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

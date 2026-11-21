@@ -1,0 +1,4 @@
+module: /private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src/click/__init__.py
+cleanup error: cleanup failed
+cleanup events: ['cleanup']
+context leaked: True

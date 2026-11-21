@@ -1,0 +1,10 @@
+{
+  "SKILL.md": "64b3dac9be71470889bf1478409246ff56a5099e0be818f3c404c95b82807e95",
+  "agents/openai.yaml": "f83c1b0100982e6c8c4b54c9f128c07e03ee24e8b85141a0bb872f42b09d4646",
+  "references/decision-rubric.md": "7a34338703770a006914bc81faf47a41b60d5cd4cd8e35c18d3dc6d8e8007341",
+  "references/report-format.md": "af4dee61ad34094e848968f9fad5b0febcdf4363a712d8d14a799396feab4a68",
+  "references/review-checklist.md": "47618334a18f07696b35b5595889447bad8f3030672f60a783ad0047cc81382d",
+  "references/sense-card.md": "5bcb1059b5fd0242f27bd8ea4a4de9d4331aadf92115e493f61824aa98d66ee5",
+  "references/test-and-change-protocol.md": "7fa0ee25411d862752f65ece000b0d8099b9dee092ae0b54aa42bd48af1cff47",
+  "scripts/validate_report.py": "f255337d99ed04a4d959028f4101eb5ab12d8e869720256607ce655c92541ee6"
+}

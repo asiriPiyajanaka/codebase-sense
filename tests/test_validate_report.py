@@ -22,6 +22,27 @@ class ReportValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(validator.InvalidReport, "mode"):
             validator.validate(report)
 
+    def test_accepts_evidenced_violated_invariant_in_new_schema(self):
+        report = copy.deepcopy(BASE)
+        report["schema_version"] = "1.1"
+        invariant = report["workflows"][0]["invariants"][0]
+        invariant["status"] = "violated"
+        invariant["evidence"] = copy.deepcopy(report["candidates"][0]["evidence"])
+        validator.validate(report)
+
+    def test_violated_invariant_requires_evidence(self):
+        report = copy.deepcopy(BASE)
+        report["schema_version"] = "1.1"
+        report["workflows"][0]["invariants"][0]["status"] = "violated"
+        with self.assertRaisesRegex(validator.InvalidReport, "evidence"):
+            validator.validate(report)
+
+    def test_legacy_schema_preserves_its_status_vocabulary(self):
+        report = copy.deepcopy(BASE)
+        report["workflows"][0]["invariants"][0]["status"] = "violated"
+        with self.assertRaisesRegex(validator.InvalidReport, "status"):
+            validator.validate(report)
+
     def test_rejects_unfounded_verified_invariant(self):
         report = copy.deepcopy(BASE)
         report["workflows"][0]["invariants"][0]["status"] = "verified"

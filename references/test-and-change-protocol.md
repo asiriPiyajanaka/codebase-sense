@@ -30,7 +30,7 @@ Avoid asserting only that dependencies were called. Where feasible, check durabl
 
 1. **Before**: record targeted tests and actual status (`passed`, `failed`, `blocked`, `not_run`); don't assume existing tests pass.
 2. **Test design**: write at least one strong assertion for the invariant at risk, where feasible. A new behavior test can first fail (`red`); an existing-behavior characterization test should start passing (`green`).
-3. **Smallest change**: move one coordinated behavior behind a clear contract and update a small caller slice.
+3. **Smallest change**: implement only the approved correction. This may be a test, local behavior fix, wrapper removal, or a small caller migration behind a clearer contract. Do not move code merely to deepen a module.
 4. **After**: rerun relevant tests and typecheck/lint; run broader tests when available and warranted.
 5. **Inspect**: compare semantic diff, external API compatibility, data migration, concurrency and failure behavior. If blocked, don't claim success.
 6. **Explain**: update the Sense Card; say what changed, how it was verified, what remains uncertain.
@@ -38,6 +38,8 @@ Avoid asserting only that dependencies were called. Where feasible, check durabl
 ## Stop conditions
 
 Stop and request a decision rather than improvising if the change requires destructive migrations, alters security/authorization guarantees, cannot preserve a confirmed contract, contradicts an ADR, or cannot be verified safely. Never silently edit an unrelated area just to get green tests.
+
+Before proposing transaction ownership, establish whether the caller already owns a transaction. Preserve that contract and test the actual database semantics. A local transaction does not cover a remote charge or message publication; use the project's existing delivery/compensation guarantees rather than promising universal exactly-once effects. Where request identity exists, check that a retry with a different payload is rejected rather than silently returning an unrelated result.
 
 ## Measuring improvement without fake precision
 

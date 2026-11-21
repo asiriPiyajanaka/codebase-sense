@@ -1,0 +1,18 @@
+--- a/current/service.py
++++ b/current/service.py
+@@ -1,5 +1,2 @@
+ def invoice_for(db, actor_id, invoice_id):
+-    invoice = db[invoice_id]
+-    if invoice["owner"] != actor_id:
+-        raise PermissionError("not your invoice")
+-    return invoice
++    return db[invoice_id]
+--- a/current/controller.py
++++ b/current/controller.py
+@@ -2,4 +2,6 @@
+ 
+ 
+ def get_invoice(db, actor_id, invoice_id):
++    if db[invoice_id]["owner"] != actor_id:
++        raise PermissionError("not your invoice")
+     return invoice_for(db, actor_id, invoice_id)

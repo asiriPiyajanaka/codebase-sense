@@ -1,0 +1,23 @@
+{
+  "method": "skills/list",
+  "skills": [
+    {
+      "name": "codebase-sense",
+      "description": "Trace codebase workflows, ownership, contracts, and behavioral guarantees so engineers stay oriented as agents implement changes. Use for architecture audits, refactor planning, verification, and architectural PR review. Recommend changes only with evidence; a justified no-change outcome is valid. Default to read-only analysis. Not for formatting or simple isolated edits.",
+      "interface": {
+        "displayName": "Codebase Sense",
+        "shortDescription": "Keep architecture understandable as agents ship code",
+        "iconSmall": null,
+        "iconLarge": null,
+        "iconSmallUrl": null,
+        "iconLargeUrl": null,
+        "brandColor": null,
+        "defaultPrompt": "Use $codebase-sense to trace a critical workflow, explain its ownership and behavioral guarantees, and assess whether any change is justified without modifying code."
+      },
+      "path": "/private/tmp/codebase-sense-qa-91vasxy9/install-project/.agents/skills/codebase-sense/SKILL.md",
+      "scope": "repo",
+      "enabled": true,
+      "pluginId": null
+    }
+  ]
+}

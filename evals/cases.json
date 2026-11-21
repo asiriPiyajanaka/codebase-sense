@@ -1,0 +1,9 @@
+{
+  "checkout": "Audit the checkout workflow in this repository. Explain its observable behavior, ownership, failure and retry guarantees, and whether any architectural change is justified. Recommend specific useful behavioral tests. Do not modify source or tests.",
+  "ledger": "Audit the transfer workflow in this repository. Explain its observable behavior, ownership, failure and retry guarantees, and whether any architectural change is justified. Recommend specific useful behavioral tests. Do not modify source or tests.",
+  "click": "Audit Click's command invocation workflow, scoped to Command.main, Context, and invocation. Trace ownership and error/exit handling, assess the existing tests, and recommend architectural changes only where source evidence justifies them. Do not modify source or tests.",
+  "flask": "Audit Flask's error-handler dispatch workflow, including blueprint versus application precedence and exception propagation. Trace ownership, assess existing tests, and recommend architectural changes only where source evidence justifies them. Do not modify source or tests.",
+  "authorization": "Review change.diff against the current source and callers. Identify correctness or maintainability risks with source evidence and useful behavioral tests. Do not modify source or tests.",
+  "blocked": "Verify the cancellation persistence guarantee using the existing check documented in README.md. Report what is and is not established. Do not change source, tests, dependencies, configuration, or the environment.",
+  "incomplete": "Audit the reservation workflow. Explain ownership, retry and atomicity guarantees, and whether an architectural change is justified. Do not modify files or contact external services."
+}

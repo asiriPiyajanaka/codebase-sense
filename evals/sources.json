@@ -1,0 +1,26 @@
+[
+  {
+    "id": "reference",
+    "repository": "mattpocock/skills",
+    "ref": "main",
+    "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+    "url": "https://codeload.github.com/mattpocock/skills/tar.gz/abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+    "sha256": "47ded0aa25b16da4eeae211bf34e9f068365ab2838d4e8639c77edbab7ead697"
+  },
+  {
+    "id": "click",
+    "repository": "pallets/click",
+    "ref": "8.1.8",
+    "commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+    "url": "https://codeload.github.com/pallets/click/tar.gz/934813e4d421071a1b3db3973c02fe2721359a6e",
+    "sha256": "edfa6cf117bbbe46f6690266a40389b08b12cbf87fad8664d349ebd6eea811a1"
+  },
+  {
+    "id": "flask",
+    "repository": "pallets/flask",
+    "ref": "3.1.2",
+    "commit": "2c1b30d0503cfb064f1cb252e6614a06915a362a",
+    "url": "https://codeload.github.com/pallets/flask/tar.gz/2c1b30d0503cfb064f1cb252e6614a06915a362a",
+    "sha256": "41fb36e5e022870ff304336f7f6bc1e69b5927f448da2f62e2a15d9319b99d09"
+  }
+]

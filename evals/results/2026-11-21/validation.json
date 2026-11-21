@@ -1,0 +1,144 @@
+{
+  "date": "2026-11-21",
+  "matrix": [
+    {
+      "python": "Python 3.9.6",
+      "checks": [
+        {
+          "arguments": [
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/check_skill.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/learning-progress-report.json"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/keep-report.json",
+            "--repo",
+            "."
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "evals/check_fixtures.py"
+          ],
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "python": "Python 3.12.13",
+      "checks": [
+        {
+          "arguments": [
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/check_skill.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/learning-progress-report.json"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/keep-report.json",
+            "--repo",
+            "."
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "evals/check_fixtures.py"
+          ],
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "python": "Python 3.14.9",
+      "checks": [
+        {
+          "arguments": [
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/check_skill.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/learning-progress-report.json"
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "scripts/validate_report.py",
+            "examples/keep-report.json",
+            "--repo",
+            "."
+          ],
+          "exit_code": 0
+        },
+        {
+          "arguments": [
+            "evals/check_fixtures.py"
+          ],
+          "exit_code": 0
+        }
+      ]
+    }
+  ],
+  "hosted_ci_executed": false,
+  "unit_tests_per_environment": 20,
+  "source_downloader": "prepare.py reproduced all three hash-pinned archives successfully",
+  "bundled_quick_validator": "passed via skill-creator/scripts/quick_validate.py",
+  "skills_cli": "skills@1.9.0 isolated project copy installation passed",
+  "codex_discovery": "codex-cli 0.165.0 skills/list found enabled repo-scoped codebase-sense; no model call",
+  "workflow_yaml": "parsed; push/pull_request and Python matrix verified; current actions pinned to release SHAs"
+}

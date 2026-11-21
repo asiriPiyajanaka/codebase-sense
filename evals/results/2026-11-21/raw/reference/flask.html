@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>flask architecture audit</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",securityLevel:"strict"});</script>
+<style>*{box-sizing:border-box}body{margin:0;background:#fafaf9;color:#0f172a;font:16px/1.6 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:48px 28px}header{border-bottom:1px solid #cbd5e1;padding-bottom:24px;margin-bottom:32px}h1,h2,h3{line-height:1.2}h1{font:44px/1.1 Georgia,serif;margin:8px 0 16px}h2{font:28px/1.2 Georgia,serif;margin:28px 0 14px}h3{font-size:20px;margin:24px 0 12px}p,ul,ol{margin:14px 0}li{margin:7px 0}.eyebrow,.diagram-label{font:12px/1.4 system-ui;text-transform:uppercase;letter-spacing:.12em;color:#475569}.legend{font-size:13px;color:#475569}.card{background:white;border:1px solid #cbd5e1;border-radius:16px;padding:28px;margin-bottom:30px}.badge{font:12px/1.4 system-ui;display:inline-block;background:#d1fae5;color:#065f46;padding:5px 10px;border-radius:30px;margin:0 6px 8px 0}.badge.category{background:#f1f5f9;color:#475569}.files{font:13px/1.6 ui-monospace,monospace;color:#475569}.diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}.diagram{border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:16px}.diagram svg{width:100%;height:auto;display:block}.problem{color:#991b1b}.wins{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}.wins li{background:#ecfdf5;padding:7px 10px;font-size:13px;border-radius:6px}.top{background:#0f172a;color:#f8fafc;border-radius:14px;padding:24px 28px;margin:36px 0}.top a{color:#a7f3d0}.evidence{border-top:1px solid #cbd5e1;padding-top:24px}.evidence h1{font-size:30px}.evidence h2{margin-top:38px}.code,.schematic,pre.mermaid{overflow:auto;border:1px solid #e2e8f0;border-radius:8px;padding:18px;background:#f1f5f9;font:12px/1.65 ui-monospace,monospace;white-space:pre}.table-scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;vertical-align:top;border:1px solid #cbd5e1;padding:10px}th{background:#f1f5f9}.footer{font-size:13px;color:#475569;border-top:1px solid #cbd5e1;padding-top:20px;margin-top:36px}@media(max-width:760px){.diagram-grid{grid-template-columns:1fr}main{padding:25px 16px}.card{padding:18px}h1{font-size:34px}}</style></head><body><main><header><p class="eyebrow">Workflow architecture audit · 21 November 2026</p><h1>Flask</h1><p class="legend">Solid box = module · dashed connector = seam · red = demonstrated failure · dark box = deep implementation</p></header>
+<article class="card" id="recommendation"><p class="eyebrow">Retention assessment</p><h2>Preserve dispatch ownership; test composition</h2><span class="badge">Strong</span><span class="badge category">in-process</span><p class="files">src/flask/sansio/app.py:823–879 · src/flask/app.py:744–951,1479–1535</p><div class="diagram-grid"><section class="diagram"><h3 class="diagram-label">Before</h3><svg viewBox="0 0 480 320" role=img aria-label="Before workflow"><defs><marker id=arrow markerWidth=7 markerHeight=7 refX=6 refY=3.5 orient=auto><path d="M0 0 L7 3.5 L0 7" fill="#64748b" /></marker></defs><rect x=25 y="10" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="39" text-anchor=middle font-size=15 fill="#0f172a">Matched request or routing failure</text><line x1=240 y1="61" x2=240 y2="90" stroke="#64748b" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="94" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="123" text-anchor=middle font-size=15 fill="#0f172a">HTTP / user exception handling</text><line x1=240 y1="145" x2=240 y2="174" stroke="#64748b" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="178" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="207" text-anchor=middle font-size=15 fill="#0f172a">One code → scope → MRO selector</text><line x1=240 y1="229" x2=240 y2="258" stroke="#64748b" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="262" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="291" text-anchor=middle font-size=15 fill="#0f172a">Unhandled → propagate or wrapped 500</text></svg></section><section class="diagram"><h3 class="diagram-label">After — ownership retained</h3><svg viewBox="0 0 480 320" role=img aria-label="After workflow"><rect x=25 y=10 width=430 height=48 rx=8 fill="#fff" stroke="#64748b" stroke-width=2 /><text x=240 y=39 text-anchor=middle font-size=15>Existing test-client interface</text><line x1=240 y1=59 x2=240 y2=85 stroke="#64748b" stroke-width=2 stroke-dasharray="5 5" /><rect x=25 y=86 width=430 height=188 rx=12 fill="#0f172a" stroke="#10b981" stroke-width=3 /><text x=240 y="119" text-anchor=middle fill="#fff" font-size="17">Same request dispatch modules</text><text x=240 y="149" text-anchor=middle fill="#cbd5e1" font-size="14">One ordered selector</text><text x=240 y="179" text-anchor=middle fill="#cbd5e1" font-size="14">Signal + propagation or wrapped 500</text><text x=240 y="209" text-anchor=middle fill="#cbd5e1" font-size="14">Finalize response + Context teardown</text><text x=240 y=307 text-anchor=middle font-size=13 fill="#065f46">Expand behavioral evidence; retain policy</text></svg></section></div><p class="problem"><strong>Problem:</strong> Code, blueprint scope and MRO precedence are easy to misread despite centralized ownership.</p><p><strong>Solution:</strong> Keep the single selector and request lifetime; test precedence and error-handler failure together.</p><ul class="wins"><li>Locality: one selector owns precedence</li><li>Leverage: requests share dispatch behavior</li><li>Interface tests observe full outcomes</li></ul><h3 class="diagram-label">Call flow</h3><pre class="mermaid">flowchart TD
+ R[request] --&gt; U[HTTP or user exception handling]
+ U --&gt; S[shared selector]
+ S --&gt; H[registered handler]
+ U --&gt;|unmatched or handler failure| X[handle_exception]
+ X --&gt; P[propagate]
+ X --&gt; E[wrapped 500 and same selector]
+ H --&gt; F[finalize]
+ E --&gt; F
+ F --&gt; T[Context teardown]
+</pre></article>
+<section class="top"><h2>Top recommendation</h2><p><a href="#recommendation">Preserve dispatch ownership; test composition</a>. Add the missing composition tests; no structural refactor is justified.</p></section><section class="evidence" aria-label="Complete audit and validation"><h1>Flask error-handler dispatch audit</h1>
+<p>Recommendation: preserve the current dispatch ownership and deepen behavioral coverage of precedence and failure composition. The central lookup already implements the selection policy; the reviewed source does not justify an architectural extraction or replacement.</p>
+<h2>Scope and evidence</h2>
+<p>The named workflow set scope: handler registration, blueprint/application precedence, HTTP and ordinary exception handling, propagation, response finalization and teardown. No change-history inference was needed. No GLOSSARY.md or docs/adr decisions were present.</p>
+<div class=table-scroll><table><tr><th>Files and lines</th><th>Ownership</th></tr><tr><td>src/flask/sansio/scaffold.py:598–698</td><td>registration, class/code normalization</td></tr><tr><td>src/flask/sansio/blueprints.py:379–397</td><td>copying blueprint registrations into app registry</td></tr><tr><td>src/flask/sansio/app.py:823–846</td><td>ordered handler selection</td></tr><tr><td>src/flask/sansio/app.py:848–879</td><td>HTTP trap policy</td></tr><tr><td>src/flask/wrappers.py:162–195</td><td>matched blueprint and innermost-to-outermost blueprint names</td></tr><tr><td>src/flask/app.py:744–809</td><td>HTTP/user exception handling and registered-handler invocation</td></tr><tr><td>src/flask/app.py:811–862</td><td>unhandled exceptions, propagation, logging, wrapped 500</td></tr><tr><td>src/flask/app.py:879–951</td><td>request dispatch, catch, and response finalization</td></tr><tr><td>src/flask/app.py:1479–1535</td><td>outer request ownership and unconditional Context pop</td></tr><tr><td>src/flask/app.py:1326–1359; src/flask/ctx.py:396–430</td><td>teardown and Context reset</td></tr></table></div>
+<p>Domain language comes from the source's request, blueprint, application, error handler and response vocabulary. Source and tests were not edited.</p>
+<h2>Registration and selection ownership</h2>
+<p>errorhandler calls register_error_handler. Registration normalizes an integer HTTP code to its exception class, or accepts an Exception subclass, then stores a handler under scope, code and class. Arbitrary Exception classes use code=None. A blueprint's registrations are copied into the app registry under its registered name, including nesting and renaming.</p>
+<p>_find_error_handler is the single policy implementation. Its search order is the nested loop:</p>
+<ol><li>For an HTTP exception with a code, search that code bucket first; then the code=None bucket. Non-HTTP exceptions search only None.</li><li>Within each bucket, search request.blueprints in order from innermost to outermost, then application scope (None).</li><li>Within each scope, search the thrown exception's class MRO from most specific to least specific.</li><li>Return the first registered handler, otherwise None.</li></ol>
+<p>This ordering has consequences that “blueprint always wins” misses:</p>
+<ul><li>An application handler for 404 beats a blueprint's generic HTTPException handler: all code buckets across scopes precede generic buckets.</li><li>Within the same bucket, a blueprint base-class handler can beat a more specific application handler, because scope precedes MRO.</li><li>A nested child handler beats its parent's handler in the same bucket; absent a child match, parents and application remain fallbacks.</li><li>A routing 404 or 405 cannot be assigned to a blueprint merely from its URL prefix. No endpoint has matched, so request.blueprints is empty and application handlers are considered.</li><li>An explicit abort(404) inside a matched blueprint view does have blueprint ownership.</li><li>A handler's returned string does not inherit the error's HTTP status. Return a proper response or status tuple when status preservation is wanted.</li></ul>
+<p>The precedence probe confirmed application-code wins over blueprint-generic, including /bp/missing, while an unmatched /bp/unmatched also selected the application 404 handler.</p>
+<h2>Request exception flow and propagation</h2>
+<ol><li>wsgi_app creates/pushes the request Context and runs full_dispatch_request.</li><li>full_dispatch_request catches Exception from request-start signaling, preprocessing or the view and delegates to handle_user_exception. Final response processing happens after this inner catch.</li><li>An ordinary, untrapped HTTPException goes to handle_http_exception. A code-less HTTPException or RoutingException is returned unchanged; routing redirects are not treated as user-handler failures. Otherwise the shared lookup selects a handler or the HTTP exception is returned as a response.</li><li>handle_user_exception otherwise uses the shared lookup and invokes a handler through ensure_sync. No match re-raises the original exception.</li><li>An unmatched ordinary exception, a failing user error handler, or a normal finalization failure escapes to wsgi_app's outer catch and enters handle_exception.</li><li>handle_exception first sends got_request_exception for that exception. PROPAGATE_EXCEPTIONS=True re-raises it. When unset, TESTING or DEBUG enables propagation; an explicit False overrides that default.</li><li>Without propagation, Flask logs the exception, constructs InternalServerError(original_exception=e), searches for a 500 handler using the same blueprint scope list, and finalizes the handler/default response.</li><li>wsgi_app finally pops the Context, supplying the unhandled error for teardown. Normal handled user exceptions need not be reported as unhandled errors to teardown or got_request_exception.</li></ol>
+<p>An explicit abort(500) is already an InternalServerError and goes through normal user handling; it is not automatically wrapped around a different original exception.</p>
+<p>TRAP_HTTP_EXCEPTIONS bypasses the special HTTP-response path, not all registered handlers. The next ordinary lookup can still find a matching registered handler. The probe set the trap flag and observed a blueprint generic HTTPException handler return 403. If no handler matches, the trapped exception escapes into propagation/500 policy. TRAP_BAD_REQUEST_ERRORS and debug-sensitive BadRequestKeyError control a related path; BadRequestKeyError may also show its key.</p>
+<p>A handler failure is not sent back through the original exception's selection loop repeatedly. The probe made a ValueError handler raise RuntimeError: with propagation off, got_request_exception received RuntimeError, the 500 handler received InternalServerError whose original_exception was RuntimeError, after_request ran, and teardown received RuntimeError. With propagation on, the same RuntimeError escaped and the 500 handler did not run.</p>
+<h2>Failure guarantees and limits</h2>
+<ul><li>Matched user handlers run before the propagation setting is considered; TESTING/DEBUG does not bypass a matching handler.</li><li>Successful handler results use normal make_response/process_response behavior, including after_request and session handling.</li><li>from_error_handler=True suppresses/logs failures in process_response or request_finished during 500 finalization. It does not cover make_response, which precedes that try.</li><li>A failing 500 handler, response conversion failure there, or failure in got_request_exception can escape. handle_exception is not recursively caught by the same outer catch.</li><li>BaseException subclasses such as KeyboardInterrupt are not converted by the Exception catches; the outer finally still performs Context cleanup.</li><li>Flask does not retry the view/error handler or roll back application side effects. Request cleanup and error dispatch provide no transaction guarantee.</li><li>Streaming iteration and errors after the response iterable is returned are not part of this pre-response dispatch guarantee.</li></ul>
+<p>These are source-supported limits, not evidence of a missing generic exception engine.</p>
+<h2>Assessment card: retain one dispatch policy module</h2>
+<p>Strength: Strong retention recommendation; no structural refactor candidate. Dependency category: in-process, with the existing request/testing adapter.</p>
+<p>Files: src/flask/sansio/app.py:823–879; src/flask/app.py:744–951,1479–1535.</p>
+<p>Problem under review: precedence, trap policy, propagation and cleanup are easy to confuse, but the implementation already gives each a distinct owner.</p>
+<p>Solution: preserve the shared selector and request lifetime module; add behavioral coverage at the test-client interface for the surprising compositions. No new interface is proposed.</p>
+<p>Before:</p>
+<pre class="schematic">registration -&gt; app registry
+matched request -&gt; HTTP/user handling -&gt; one selector
+unhandled failure -&gt; propagation OR wrapped 500
+response -&gt; finalization -&gt; Context teardown
+</pre>
+<p>After:</p>
+<pre class="schematic">same modules, same selector, same ownership
+test-client seam exercises:
+  code before scope before MRO
+  handler failure -&gt; signal -&gt; propagation/500
+  finalization and teardown outcomes
+</pre>
+<p>Deletion test: deleting the selector would duplicate code/scope/MRO ordering in HTTP, ordinary and 500 handling. Deleting the separate HTTP or outer-unhandled paths would push routing exceptions, propagation and wrapper decisions into callers. Complexity would move or multiply rather than disappear. Method length or a large app.py is not evidence of shallowness.</p>
+<ul><li>Module depth: selection hides ordered registry lookup.</li><li>Interface leverage: requests share one dispatch policy.</li><li>Locality: precedence stays in one implementation.</li><li>Seam: test client exercises complete request outcomes.</li><li>Adapter: preserve existing request/testing variation.</li></ul>
+<p>No extra handler adapter, registry abstraction, extracted policy engine, or whole-app module split has demonstrated value here. The malformed-host test failure described below does not establish that this architecture should change.</p>
+<h2>Existing tests and useful behavioral tests</h2>
+<p>The existing suite already protects much of the contract:</p>
+<ul><li>tests/test_user_error_handler.py:10–58: invalid registrations, no matching user handler, wrapped versus direct 500.</li><li>:61–133: ordinary and HTTP exception MRO specificity.</li><li>:136–214: blueprint/application handling, generic HTTP handling and routing redirect exclusion.</li><li>:217–295: generic HTTPException/Exception handlers and class/code 500 equivalence.</li><li>tests/test_blueprints.py:8–100: blueprint-specific handlers, app fallback and app_errorhandler.</li><li>:793–842: nested child/parent/grandchild handler fallback.</li><li>tests/test_basic.py:867–948: status preservation, after_request on errors, BaseException propagation and routing preprocessing.</li><li>:999–1108: inheritance precedence, trap flags, before/after processor failures.</li><li>:1581–1598: TESTING, DEBUG and explicit propagation.</li><li>tests/test_signals.py:95–113: got_request_exception for an unhandled error.</li><li>tests/test_reqctx.py has Context cleanup tests and an autouse leak detector in conftest.py.</li></ul>
+<p>The interface is the test surface. Suggested additions concentrate on combinations not explicit in the reviewed tests:</p>
+<ol><li>Code versus scope: application 404 versus blueprint HTTPException; assert the application code handler wins. Include an explicit blueprint abort and an unmatched prefixed URL.</li><li>Scope versus specificity: blueprint parent-exception handler versus application child-exception handler in the same bucket; assert the blueprint handler wins. Add nested child/parent/application fallbacks.</li><li>Trap with a registered handler: TRAP_HTTP_EXCEPTIONS=True and a matching HTTPException handler should still handle; contrast with no handler and propagation enabled.</li><li>Error-handler failure: ordinary handler raises a different exception. Assert got_request_exception identity, original_exception identity on wrapped 500, after_request result and teardown exception. Repeat with explicit propagation True and False, including testing/debug defaults.</li><li>Blueprint unhandled 500: an ordinary exception from a matched blueprint selects its 500 handler; a routing error outside a matched endpoint cannot use that blueprint scope.</li><li>Finalization failure: distinguish a failing after_request during normal processing from one during 500 safe finalization; assert response, logged failure, callback counts and Context cleanup. Separately show that a failing 500 handler escapes without recursive dispatch.</li><li>Handler returns bare body versus body/status tuple: assert the actual status rather than only response content.</li></ol>
+<p>Preserve the existing high-value tests. The recommendations add leverage at the existing request seam; they do not require another architecture.</p>
+<h2>Top recommendation</h2>
+<p>Add a small precedence-and-failure matrix through the existing test-client interface. Keep the shared selector and request/error ownership. The behavior has depth already; the main opportunity is making its less obvious combinations explicit.</p>
+<h2>Skill and harness adaptation</h2>
+<p>Applied improve-codebase-architecture with codebase-design, HTML-REPORT.md and DEEPENING.md. The harness replaces skill-required sub-agents, opening HTML/windows, filename conventions and interactive grilling: one agent wrote flask.md and flask.html in the authorized reports directory and stops after the audit. CDN references were not fetched. No new interface, source/test edit, glossary/ADR edit, network, installation, live server, git mutation or external write was needed.</p>
+<h2>Validation and limitations</h2>
+<p>Working directory: /private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask</p>
+<p>First exact command:</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python -m pytest -p no:cacheprovider -q tests/test_user_error_handler.py tests/test_blueprints.py tests/test_basic.py tests/test_signals.py tests/test_reqctx.py</code></pre>
+<p>Exit code: 1. Exact output:</p>
+<pre class="code"><code data-language="text">........................................................................ [ 32%]
+........................................................................ [ 65%]
+.....................................................................ss. [ 98%]
+.F..                                                                     [100%]
+=================================== FAILURES ===================================
+_____________________ test_bad_environ_raises_bad_request ______________________
+
+    def test_bad_environ_raises_bad_request():
+        app = flask.Flask(__name__)
+    
+        from flask.testing import EnvironBuilder
+    
+        builder = EnvironBuilder(app)
+        environ = builder.get_environ()
+    
+        # use a non-printable character in the Host - this is key to this test
+        environ[&quot;HTTP_HOST&quot;] = &quot;\x8a&quot;
+    
+        with app.request_context(environ):
+            response = app.full_dispatch_request()
+&gt;       assert response.status_code == 400
+E       assert 404 == 400
+E        +  where 404 = &lt;Response streamed [404 NOT FOUND]&gt;.status_code
+
+tests/test_reqctx.py:293: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reqctx.py::test_bad_environ_raises_bad_request - assert 404...
+1 failed, 217 passed, 2 skipped in 0.39s</code></pre>
+<p>The failed test concerns malformed Host handling, not handler precedence. Werkzeug in this environment is 3.1.9. The root cause was not established; it is not silently counted as passing or assumed to be a dependency defect. Two greenlet-related tests were skipped. No dependencies or source were changed.</p>
+<p>The narrower four-file workflow set was then run to isolate reviewed handler behavior:</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python -m pytest -p no:cacheprovider -q tests/test_user_error_handler.py tests/test_blueprints.py tests/test_basic.py tests/test_signals.py</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">........................................................................ [ 34%]
+........................................................................ [ 69%]
+..............................................................           [100%]
+206 passed in 0.33s</code></pre>
+<p>This second run does not erase the first failure. The local probes below validate only their stated compositions, not every configuration, async adapter or supported dependency version.</p>
+<h2>Reproduction commands and exact results</h2>
+<p>Exact command (same working directory as above):</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python - &lt;&lt;'PY'
+from importlib.metadata import version
+from flask import Flask, Blueprint, abort, got_request_exception
+from werkzeug.exceptions import HTTPException
+import flask
+print('module:', flask.__file__)
+print('Werkzeug:', version('werkzeug'))
+app = Flask('precedence')
+app.testing = True
+bp = Blueprint('bp', __name__)
+@bp.errorhandler(HTTPException)
+def bp_http(e):
+    return 'blueprint-generic', e.code
+@app.errorhandler(404)
+def app_404(e):
+    return 'application-code', 404
+@bp.route('/missing')
+def missing():
+    abort(404)
+@bp.route('/forbidden')
+def forbidden():
+    abort(403)
+app.register_blueprint(bp, url_prefix='/bp')
+client = app.test_client()
+for path in ['/bp/missing', '/bp/unmatched']:
+    response = client.get(path)
+    print(path, response.status_code, response.get_data(as_text=True))
+app.config['TRAP_HTTP_EXCEPTIONS'] = True
+response = client.get('/bp/forbidden')
+print('trapped with handler:', response.status_code, response.get_data(as_text=True))
+app2 = Flask('handler_failure')
+app2.config.update(TESTING=True, PROPAGATE_EXCEPTIONS=False)
+app2.logger.disabled = True
+events = []
+@app2.route('/')
+def fail():
+    raise ValueError('view failed')
+@app2.errorhandler(ValueError)
+def broken_handler(e):
+    raise RuntimeError('handler failed')
+@app2.errorhandler(500)
+def error_500(e):
+    events.append(('500', type(e).__name__, type(e.original_exception).__name__))
+    return 'handled-500', 500
+@app2.after_request
+def after(response):
+    events.append(('after', response.status_code))
+    return response
+@app2.teardown_request
+def teardown(e):
+    events.append(('teardown', type(e).__name__))
+def on_exception(sender, exception):
+    events.append(('signal', type(exception).__name__))
+got_request_exception.connect(on_exception, app2, weak=False)
+response = app2.test_client().get('/')
+print('handler failure:', response.status_code, response.get_data(as_text=True))
+print('events:', events)
+app2.config['PROPAGATE_EXCEPTIONS'] = True
+events.clear()
+try:
+    app2.test_client().get('/')
+except RuntimeError as e:
+    print('propagated:', type(e).__name__, str(e))
+print('propagation events:', events)
+PY</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">module: /private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask/src/flask/__init__.py
+Werkzeug: 3.1.9
+/bp/missing 404 application-code
+/bp/unmatched 404 application-code
+trapped with handler: 403 blueprint-generic
+handler failure: 500 handled-500
+events: [('signal', 'RuntimeError'), ('500', 'InternalServerError', 'RuntimeError'), ('after', 500), ('teardown', 'RuntimeError')]
+propagated: RuntimeError handler failed
+propagation events: [('signal', 'RuntimeError'), ('teardown', 'RuntimeError')]</code></pre></section><p class="footer">Offline-readable Markdown: flask.md. Diagrams and audit text remain available without fetching CDN scripts. HTML was not opened, and CDN content was not fetched during this audit.</p></main></body></html>
+

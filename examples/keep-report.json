@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.1",
+  "scope": "Bundled ledger fixture: transfer and retry contract",
+  "mode": "audit",
+  "summary": "Keep the public Ledger contract and intentional SQLite adapter seam. The inspected workflow does not justify an architectural refactor.",
+  "workflows": [
+    {
+      "name": "Transfer ledger units",
+      "promise": "A valid transfer moves units atomically; an exact retry returns the original receipt and a conflicting retry is rejected.",
+      "entry_point": "evals/fixtures/ledger/ledger.py",
+      "trace": [
+        {"path": "evals/fixtures/ledger/ledger.py", "symbol": "Ledger.transfer", "role": "validate identities and amount"},
+        {"path": "evals/fixtures/ledger/sqlite_adapter.py", "symbol": "SQLiteLedger.transfer", "role": "own local transaction, request identity, balances, and receipt"}
+      ],
+      "owner": "Ledger owns input validation; SQLiteLedger owns persistence guarantees. This split is intentional.",
+      "change_entry_point": "evals/fixtures/ledger/sqlite_adapter.py:SQLiteLedger.transfer for a persistence invariant",
+      "invariants": [
+        {
+          "statement": "An exact retry moves balances once and a changed amount with the same request ID is rejected in the in-memory SQLite tests.",
+          "status": "verified",
+          "evidence": [{"path": "evals/fixtures/ledger/tests/test_ledger.py", "symbol": "LedgerTests.test_transfer_and_retry / test_conflicting_retry"}]
+        },
+        {
+          "statement": "A missing receiver rolls back the debit and leaves no receipt in the tested boundary.",
+          "status": "verified",
+          "evidence": [{"path": "evals/fixtures/ledger/tests/test_ledger.py", "symbol": "LedgerTests.test_missing_receiver_rolls_back"}]
+        },
+        {"statement": "Concurrent requests across separate database connections preserve the contract.", "status": "unknown", "evidence": []}
+      ],
+      "unknowns": ["PostgreSQL implementation is outside this fixture", "The fixture suite does not exercise concurrent connections"]
+    }
+  ],
+  "candidates": [],
+  "verification": {
+    "checks": [{"command": "python3 -m unittest discover -s tests -v", "status": "passed", "details": "Executed from evals/fixtures/ledger on 2026-11-21: 5 tests passed. This is a recorded fixture result, not a promise about every future environment."}],
+    "unverified": ["Production adapters", "Concurrent connections in the shipped fixture suite"]
+  },
+  "next_step": "No architectural change recommended in the inspected scope. If concurrent writers are in scope, add a separate-connection integration check before claiming that guarantee."
+}

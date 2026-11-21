@@ -2,9 +2,11 @@
 """Validate Codebase Sense's optional JSON report structure and source paths.
 
 Does not establish the truth of report claims or run application tests.
-Standard library only. Usage:
+Python 3.9+, standard library only. Usage:
     python3 scripts/validate_report.py path/to/report.json [--repo path/to/repo]
 """
+
+from __future__ import annotations
 
 import argparse
 import json
@@ -13,7 +15,7 @@ from pathlib import Path, PurePosixPath
 
 MODES = {"audit", "plan", "implement", "review", "verify"}
 DECISIONS = {"change", "investigate", "keep"}
-INVARIANT_STATUSES = {"verified", "missing", "unknown"}
+INVARIANT_STATUSES = {"verified", "violated", "missing", "unknown"}
 CHECK_STATUSES = {"passed", "failed", "blocked", "not_run"}
 
 
@@ -94,8 +96,9 @@ def evidence_entries(value, loc: str, repo: Path | None, min_count=0) -> None:
 
 def validate(report: dict, repo: Path | None = None) -> None:
     report = require_obj(report, "report")
-    if report.get("schema_version") != "1.0":
-        fail("schema_version", "expected '1.0'")
+    version = report.get("schema_version")
+    if version not in ("1.0", "1.1"):
+        fail("schema_version", "expected '1.0' or '1.1'")
     require_text(report, "scope", "report")
     mode = require_text(report, "mode", "report")
     if mode not in MODES:
@@ -123,10 +126,11 @@ def validate(report: dict, repo: Path | None = None) -> None:
             inv = require_obj(inv, il)
             require_text(inv, "statement", il)
             status = require_text(inv, "status", il)
-            if status not in INVARIANT_STATUSES:
-                fail(f"{il}.status", f"expected one of {sorted(INVARIANT_STATUSES)}")
+            allowed_statuses = INVARIANT_STATUSES if version == "1.1" else INVARIANT_STATUSES - {"violated"}
+            if status not in allowed_statuses:
+                fail(f"{il}.status", f"expected one of {sorted(allowed_statuses)}")
             evidence_entries(inv.get("evidence"), f"{il}.evidence", repo,
-                             min_count=1 if status == "verified" else 0)
+                             min_count=1 if status in {"verified", "violated"} else 0)
         require_string_list(workflow, "unknowns", loc)
 
     candidates = require_list(report.get("candidates"), "candidates", maximum=3)

@@ -1,0 +1,5 @@
+owner HTTP and export: allowed, amount=10
+non-owner HTTP: PermissionError not your invoice
+non-owner service: returned {'owner': 'alice', 'amount': 10}
+non-owner export: returned amount=10
+Observed authorization regression reproduced through real service and export caller.

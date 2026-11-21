@@ -1,0 +1,44 @@
+{
+  "python": "Python 3.12.13",
+  "checks": [
+    {
+      "arguments": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "arguments": [
+        "scripts/check_skill.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "arguments": [
+        "scripts/validate_report.py",
+        "examples/learning-progress-report.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "arguments": [
+        "scripts/validate_report.py",
+        "examples/keep-report.json",
+        "--repo",
+        "."
+      ],
+      "exit_code": 0
+    },
+    {
+      "arguments": [
+        "evals/check_fixtures.py"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "SKILL.md": "7dd94519a10f482424f53409b660d72ede0cd99262ca2fe4490bc6a8f547e702",
+  "agents/openai.yaml": "f83c1b0100982e6c8c4b54c9f128c07e03ee24e8b85141a0bb872f42b09d4646",
+  "examples/keep-report.json": "b0abf706fa83ce858c991fcbcb2e02f48fe586d5d9a18494b4cc2fed36405e30",
+  "examples/keep.md": "7b53714b28aaff534c4f55319d3eb0626007d81f5cedb45e8c60c2584c36fc6d",
+  "examples/learning-progress-report.json": "cd8e4111fadf3033cca75ec3a5e1f34fb006b78e3082d912f6980dc7e3ae45bd",
+  "references/decision-rubric.md": "7a34338703770a006914bc81faf47a41b60d5cd4cd8e35c18d3dc6d8e8007341",
+  "references/report-format.md": "d9467d6a2ab6aa4f4c0e41c36bc6c6069bdc24fc45de78654d0eb03f6124099e",
+  "references/review-checklist.md": "47618334a18f07696b35b5595889447bad8f3030672f60a783ad0047cc81382d",
+  "references/sense-card.md": "3cc3a435877018b9e353b99ae4b013599466e34909d57e959b5c38af02d7f262",
+  "references/test-and-change-protocol.md": "7fa0ee25411d862752f65ece000b0d8099b9dee092ae0b54aa42bd48af1cff47",
+  "scripts/check_skill.py": "cec0641473eebaa5ffa9e3c7871c512197562dd7ad89502bffb70e8ea1751eef",
+  "scripts/package_release.py": "1dc911aacc55e35c8a7fdf9832ded63c576a2d02c94dafbaffdf29afb8bef716",
+  "scripts/validate_report.py": "0c77ee0638ce1e10ddeefafc5b6653627a06ca0282264c8ccf051b812d95b92e"
+}

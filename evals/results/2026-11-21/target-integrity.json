@@ -1,0 +1,32 @@
+{
+  "initial": {
+    "files_before": 389,
+    "files_after": 389,
+    "changed": []
+  },
+  "reference": {
+    "files_before": 389,
+    "files_after": 389,
+    "changed": []
+  },
+  "baseline": {
+    "files_before": 389,
+    "files_after": 389,
+    "changed": []
+  },
+  "candidate-a": {
+    "files_before": 389,
+    "files_after": 389,
+    "changed": []
+  },
+  "candidate-b": {
+    "files_before": 19,
+    "files_after": 19,
+    "changed": []
+  },
+  "final-schema": {
+    "files_before": 13,
+    "files_after": 13,
+    "changed": []
+  }
+}

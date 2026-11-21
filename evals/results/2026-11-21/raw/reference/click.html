@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>click architecture audit</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true,theme:"neutral",securityLevel:"strict"});</script>
+<style>*{box-sizing:border-box}body{margin:0;background:#fafaf9;color:#0f172a;font:16px/1.6 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:48px 28px}header{border-bottom:1px solid #cbd5e1;padding-bottom:24px;margin-bottom:32px}h1,h2,h3{line-height:1.2}h1{font:44px/1.1 Georgia,serif;margin:8px 0 16px}h2{font:28px/1.2 Georgia,serif;margin:28px 0 14px}h3{font-size:20px;margin:24px 0 12px}p,ul,ol{margin:14px 0}li{margin:7px 0}.eyebrow,.diagram-label{font:12px/1.4 system-ui;text-transform:uppercase;letter-spacing:.12em;color:#475569}.legend{font-size:13px;color:#475569}.card{background:white;border:1px solid #cbd5e1;border-radius:16px;padding:28px;margin-bottom:30px}.badge{font:12px/1.4 system-ui;display:inline-block;background:#d1fae5;color:#065f46;padding:5px 10px;border-radius:30px;margin:0 6px 8px 0}.badge.category{background:#f1f5f9;color:#475569}.files{font:13px/1.6 ui-monospace,monospace;color:#475569}.diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}.diagram{border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:16px}.diagram svg{width:100%;height:auto;display:block}.problem{color:#991b1b}.wins{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}.wins li{background:#ecfdf5;padding:7px 10px;font-size:13px;border-radius:6px}.top{background:#0f172a;color:#f8fafc;border-radius:14px;padding:24px 28px;margin:36px 0}.top a{color:#a7f3d0}.evidence{border-top:1px solid #cbd5e1;padding-top:24px}.evidence h1{font-size:30px}.evidence h2{margin-top:38px}.code,.schematic,pre.mermaid{overflow:auto;border:1px solid #e2e8f0;border-radius:8px;padding:18px;background:#f1f5f9;font:12px/1.65 ui-monospace,monospace;white-space:pre}.table-scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;vertical-align:top;border:1px solid #cbd5e1;padding:10px}th{background:#f1f5f9}.footer{font-size:13px;color:#475569;border-top:1px solid #cbd5e1;padding-top:20px;margin-top:36px}@media(max-width:760px){.diagram-grid{grid-template-columns:1fr}main{padding:25px 16px}.card{padding:18px}h1{font-size:34px}}</style></head><body><main><header><p class="eyebrow">Workflow architecture audit · 21 November 2026</p><h1>Click</h1><p class="legend">Solid box = module · dashed connector = seam · red = demonstrated failure · dark box = deep implementation</p></header>
+<article class="card" id="recommendation"><p class="eyebrow">Candidate</p><h2>Complete Context failure cleanup</h2><span class="badge">Strong</span><span class="badge category">in-process</span><p class="files">src/click/core.py:462–514,558–606,910–950</p><div class="diagram-grid"><section class="diagram"><h3 class="diagram-label">Before</h3><svg viewBox="0 0 480 320" role=img aria-label="Before workflow"><defs><marker id=arrow markerWidth=7 markerHeight=7 refX=6 refY=3.5 orient=auto><path d="M0 0 L7 3.5 L0 7" fill="#64748b" /></marker></defs><rect x=25 y="10" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="39" text-anchor=middle font-size=15 fill="#0f172a">main → make_context</text><line x1=240 y1="61" x2=240 y2="90" stroke="#64748b" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="94" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="123" text-anchor=middle font-size=15 fill="#0f172a">parse failure → cleanup abandoned</text><line x1=240 y1="145" x2=240 y2="174" stroke="#b91c1c" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="178" width=430 height=48 rx=8 fill="#fff" stroke="#b91c1c" stroke-width=2 /><text x=240 y="207" text-anchor=middle font-size=15 fill="#0f172a">invoke → close raises</text><line x1=240 y1="229" x2=240 y2="258" stroke="#64748b" stroke-width=2 marker-end="url(#arrow)" /><rect x=25 y="262" width=430 height=48 rx=8 fill="#fff" stroke="#94a3b8" stroke-width=2 /><text x=240 y="291" text-anchor=middle font-size=15 fill="#0f172a">pop_context is skipped</text></svg></section><section class="diagram"><h3 class="diagram-label">After</h3><svg viewBox="0 0 480 320" role=img aria-label="After workflow"><rect x=25 y=10 width=430 height=48 rx=8 fill="#fff" stroke="#64748b" stroke-width=2 /><text x=240 y=39 text-anchor=middle font-size=15>Same Command / Context interface</text><line x1=240 y1=59 x2=240 y2=85 stroke="#64748b" stroke-width=2 stroke-dasharray="5 5" /><rect x=25 y=86 width=430 height=188 rx=12 fill="#0f172a" stroke="#10b981" stroke-width=3 /><text x=240 y="119" text-anchor=middle fill="#fff" font-size="17">Existing Context module</text><text x=240 y="149" text-anchor=middle fill="#cbd5e1" font-size="14">Successful parse: defer cleanup</text><text x=240 y="179" text-anchor=middle fill="#cbd5e1" font-size="14">Failed parse: release resources</text><text x=240 y="209" text-anchor=middle fill="#cbd5e1" font-size="14">Cleanup failure: restore parent</text><text x=240 y=307 text-anchor=middle font-size=13 fill="#065f46">Focused fixes; preserve invocation seams</text></svg></section></div><p class="problem"><strong>Problem:</strong> A failing close skips stack restoration; failed parsing can abandon registered cleanup.</p><p><strong>Solution:</strong> Keep lifetime ownership in Context and complete cleanup for each demonstrated failure.</p><ul class="wins"><li>Locality: Context owns lifetime failures</li><li>Leverage: embedded calls restore state</li><li>Depth: existing interface gains guarantees</li></ul><h3 class="diagram-label">Call flow</h3><pre class="mermaid">flowchart TD
+ M[main] --&gt; C[make_context]
+ C --&gt; P[parse cleanup false]
+ P --&gt;|error| R[registered cleanup abandoned]
+ C --&gt; I[Command.invoke]
+ I --&gt; X[Context.invoke]
+ X --&gt; E[Context exit]
+ E --&gt; K[close]
+ K --&gt;|raises| L[pop skipped]
+</pre></article>
+<section class="top"><h2>Top recommendation</h2><p><a href="#recommendation">Complete Context failure cleanup</a>. Fix reproduced lifecycle failures without replacing the invocation architecture.</p></section><section class="evidence" aria-label="Complete audit and validation"><h1>Click command invocation audit</h1>
+<p>Recommendation: retain Command, Context, and invocation ownership, and repair two demonstrated failure paths inside the existing Context lifecycle module. A broad invocation redesign is not justified.</p>
+<h2>Scope and evidence</h2>
+<p>Audited Command.main (implemented on BaseCommand), context creation/cleanup, Command.invoke, Context.invoke/forward, error classes, the relevant group invocation extension, CliRunner, and targeted tests. The named workflow set the scope; no commit-history inference was needed. No GLOSSARY.md or docs/adr decisions were present in this copy.</p>
+<p>Important source references in src/click/core.py:</p>
+<div class=table-scroll><table><tr><th>Reference</th><th>Ownership</th></tr><tr><td>BaseCommand.main:1014–1126</td><td>argument normalization, context lifetime, standalone error/exit policy</td></tr><tr><td>make_context:910–950</td><td>context settings, context_class, parsing inside scope(cleanup=False)</td></tr><tr><td>Command.parse_args:1408–1430</td><td>parameter processing, extra argument rejection, remaining args</td></tr><tr><td>Command.invoke:1432–1444</td><td>deprecation warning and dispatch of callback using ctx.params</td></tr><tr><td>Context.invoke:737–788</td><td>child context/defaults when given a Command; callback context activation</td></tr><tr><td>Context.forward:790–810</td><td>copies missing current params, then invokes another Command</td></tr><tr><td>Context.__enter__/__exit__/scope:462–514</td><td>active-context stack, nesting depth, cleanup scheduling</td></tr><tr><td>Context.with_resource/call_on_close/close:558–606</td><td>ExitStack-owned resource lifetime</td></tr><tr><td>Context.fail/abort/exit:685–700</td><td>raises UsageError, Abort, or Exit</td></tr><tr><td>MultiCommand.invoke:1663–1732</td><td>parent/child lifetime, group callback and result processing</td></tr></table></div>
+<p>Other evidence: src/click/exceptions.py:25–90,282–300; src/click/globals.py:20–48; src/click/testing.py:353–442. Source and tests were not edited.</p>
+<h2>Observable invocation and ownership</h2>
+<ol><li>main copies explicit args or takes sys.argv; optional Windows expansion applies only to inherited process args. It determines the program name and processes shell completion before the normal exception-handling block.</li><li>make_context combines context_settings with explicit overrides, constructs context_class, and parses while the Context is current. cleanup=False keeps resources registered during successful parsing alive for invocation.</li><li>main enters the returned Context and calls self.invoke. Command.invoke delegates the callback and parsed ctx.params to Context.invoke.</li><li>For a plain callable, Context.invoke activates the same Context. For another Command, it creates a child of the current Context's type, fills missing exposed parameter defaults with type conversion, records kwargs in child.params, and invokes its callback. This programmatic path does not reparse argv or perform the entire Command.main error/exit policy.</li><li>forward carries current params into kwargs only where absent, then reuses Context.invoke. Existing kwargs win.</li><li>Nested Context entry increments depth. Cleanup is deferred until the last exit. Registered cleanup is LIFO through ExitStack and runs while the Context is still current.</li><li>In the normal path, non-standalone main returns the callback result; standalone main explicitly exits with code zero, even if a callback returns a nonzero integer.</li><li>Groups extend the same lifetime model. Parent Context stays active through result processing, child callbacks have child Contexts, and chain invocation gathers results. These extension points are reason to preserve ownership rather than flatten the workflow.</li></ol>
+<p>Context owns parsed state, parent metadata and resource cleanup. Command owns command-specific parsing and dispatch. main owns process-style presentation and exit policy. CliRunner is a testing adapter: it captures SystemExit and, by default, other exceptions; a Result.exit_code does not prove main itself converted an ordinary error.</p>
+<h2>Error, exit, and retry behavior</h2>
+<div class=table-scroll><table><tr><th>Outcome</th><th>standalone_mode=True</th><th>standalone_mode=False</th></tr><tr><td>Callback returns value</td><td>SystemExit(0); result is not an exit status</td><td>Return value</td></tr><tr><td>ctx.exit(n) / Exit(n)</td><td>SystemExit(n)</td><td>Return n</td></tr><tr><td>ClickException</td><td>Display error, SystemExit(e.exit_code)</td><td>Re-raise</td></tr><tr><td>UsageError / ctx.fail</td><td>Usage diagnostic, normally SystemExit(2)</td><td>Re-raise UsageError</td></tr><tr><td>Abort / ctx.abort</td><td>“Aborted!” on stderr, SystemExit(1)</td><td>Re-raise Abort</td></tr><tr><td>EOFError / KeyboardInterrupt</td><td>Newline, translate to Abort, then exit 1</td><td>Newline, raise Abort chained from original</td></tr><tr><td>OSError with errno.EPIPE</td><td>Pacify stdout/stderr flush, SystemExit(1)</td><td>Same SystemExit(1) special case</td></tr><tr><td>Other OSError or ordinary callback error</td><td>Propagate</td><td>Propagate</td></tr></table></div>
+<p>The successful return value and an explicit exit code can be ambiguous in non-standalone mode, as the implementation itself documents. augment_usage_errors at core.py:98–114 attaches a missing Context/parameter to usage errors and re-raises; it does not own terminal policy.</p>
+<p>Exit is control flow, not a rollback mechanism. No invocation is automatically retried and no callback effects are undone by Click. A second invocation is a new execution. Shell completion runs before normal handling, so its early-exit behavior should not be inferred from the main invocation table.</p>
+<h2>Demonstrated lifecycle failures</h2>
+<h3>Cleanup failure leaves the Context current</h3>
+<p>At core.py:473–476, close() precedes pop_context() without unconditional finalization. If a registered close callback raises, pop_context is skipped. A direct non-standalone main probe with one cleanup raising RuntimeError observed that RuntimeError and then get_current_context(silent=True) still returned a Context. The cleanup ran once.</p>
+<p>This is externally observable lifecycle state, not a demand to split a large source file. It can affect later embedded invocations in the same thread.</p>
+<h3>Parse failure abandons registered cleanup</h3>
+<p>make_context parses under scope(cleanup=False). If a parameter callback registers cleanup and a later required argument is missing, make_context never returns a Context to main's with statement. The no-cleanup scope pops the current Context but does not run the registered cleanup.</p>
+<p>A direct probe registered “closed” after recording “opened”, then omitted a required argument. It raised MissingParameter, recorded only [&quot;opened&quot;], and left no current Context. Thus this failure differs from the cleanup-error stack leak: registered resource cleanup is abandoned, while stack state is restored.</p>
+<h2>Candidate: complete ownership of Context failure cleanup</h2>
+<p>Strength: Strong for the reproduced fixes. Dependency category: in-process.</p>
+<p>Files: src/click/core.py:462–514,558–606,910–950; related tests/test_context.py and tests/test_commands.py.</p>
+<p>Problem: callers trust Context lifetime, but a raising cleanup skips stack restoration and a failing parse can bypass cleanup ownership entirely.</p>
+<p>Solution: keep lifetime policy in the existing Context module, restore the active-context stack unconditionally after cleanup, and ensure a Context created for failed parsing releases its registered resources before becoming unreachable. Preserve successful parse deferral, nested cleanup timing, custom Context types, and error chaining. This states the desired behavior; no replacement interface is proposed.</p>
+<p>Before:</p>
+<pre class="schematic">main -&gt; make_context [no-cleanup parse scope]
+         parse fails -&gt; resources not released
+      -&gt; invoke callback
+      -&gt; close raises -&gt; pop_context skipped
+</pre>
+<p>After:</p>
+<pre class="schematic">same main / Context interface
+  Context module owns every lifetime outcome
+    successful parse -&gt; defer until invocation ends
+    failed parse -&gt; release owned resources
+    close success or failure -&gt; restore parent/current Context
+</pre>
+<p>Deletion test: deleting Context.invoke or make_context would move default filling, custom-context behavior, parsing scope and lifetime decisions into callers. Deleting Context would scatter these decisions even further. These modules already provide depth; flattening them loses leverage. The defect is incomplete failure ownership within their implementation, not the existence of their seams.</p>
+<ul><li>Locality: Context owns lifecycle failure policy.</li><li>Leverage: CLI and embedded callers benefit.</li><li>Depth: existing interface guarantees complete lifetime.</li><li>Seam: Context activation stays in one place.</li><li>Adapter: custom Context tests preserve variation.</li></ul>
+<p>The existing context_class and child-context-type seam has concrete custom implementations in tests/test_custom_classes.py:4–44. No new adapter hierarchy or generic invocation engine is justified. Error rendering and callback dispatch have distinct responsibilities; do not merge them merely because they are nearby.</p>
+<h2>Existing tests and useful behavioral tests</h2>
+<p>Existing evidence is substantial:</p>
+<ul><li>tests/test_context.py:103–134 verifies nested entry, cleanup once, and normal global Context restoration.</li><li>:177–201 verifies cleanup=False deferral; this one inspects private depth as well as callback behavior.</li><li>:219–253 verifies cleanup before Context pop and with_resource release.</li><li>:307–320 covers explicit exit values in non-standalone mode.</li><li>tests/test_commands.py:8–64 covers invoke, forward, and forwarded params; :235–253 covers missing defaults; :534–544 covers EOF/interrupt chaining. The one expected failure in the selected run is test_multicommand_chaining at tests/test_chain.py:221–222.</li><li>tests/test_custom_classes.py:4–44 exercises context_class and child Context type.</li><li>tests/test_chain.py covers group chains/result callbacks.</li><li>tests/test_testing.py:163–185 and391–401 distinguish runner exception capture from non-standalone return values.</li></ul>
+<p>The interface is the test surface. Prioritize:</p>
+<ol><li>Failing close callback: invoke main inside a parent Context; cleanup must observe the child as current, raise its original error, run remaining LIFO callbacks once, and restore the parent afterward. After the parent exits, no Context should remain.</li><li>Failed parse after resource registration: an option callback registers cleanup, then another required input fails; the callback must not run, cleanup must run once, and the current Context must return to its prior value.</li><li>Preserve successful parsing lifetime: a resource acquired by a parameter callback remains usable during command invocation and is released once afterward.</li><li>Standalone versus embedded matrix: return 7, ctx.exit(7), UsageError, ClickException, Abort, EOFError, KeyboardInterrupt, and ordinary RuntimeError. Assert returned values or exact exception types/codes, diagnostics, cause, cleanup events and parent restoration.</li><li>EPIPE: isolate the stdout/stderr replacement in a local subprocess or restore captured streams explicitly; assert SystemExit(1) even in non-standalone mode. No process-level probe was run for this branch.</li><li>Custom Context plus invoke/forward: preserve the existing custom type, defaults, explicit kwargs, parent relationship and result, while asserting child cleanup precedes parent cleanup.</li><li>Group result processing: maintain parent resource availability through the result callback and check failed child invocation still releases contexts.</li></ol>
+<p>Add the lifecycle cases to existing behavioral coverage. Rewriting all tests around private Context state would reduce leverage and make implementation changes expensive.</p>
+<h2>Top recommendation</h2>
+<p>Fix and test Context failure cleanup inside its current module. Keep the mature Command/Context/invocation structure; the measured defects do not warrant a new runtime architecture.</p>
+<h2>Skill and harness adaptation</h2>
+<p>Applied improve-codebase-architecture, codebase-design, HTML-REPORT.md and DEEPENING.md. The harness supersedes fresh sub-agent exploration, browser/window opening, report filename conventions and grilling. One agent produced click.md and click.html in the authorized reports directory without fetching CDN scripts. No source/test edit, proposed new interface, glossary/ADR edit, network, installation, live process, git mutation or external write was needed.</p>
+<h2>Validation</h2>
+<p>Working directory: /private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click</p>
+<p>Exact command:</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python -m pytest -p no:cacheprovider -q tests/test_context.py tests/test_commands.py tests/test_basic.py tests/test_custom_classes.py tests/test_chain.py</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">........................................................................ [ 44%]
+........................................................................ [ 89%]
+................x                                                        [100%]
+160 passed, 1 xfailed in 0.16s</code></pre>
+<p>Additional exact command:</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python -m pytest -p no:cacheprovider -q tests/test_testing.py -k 'catch_exceptions or command_standalone_mode_returns_value or exit_code_and_output_from_sys_exit'</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">...                                                                      [100%]
+3 passed, 21 deselected in 0.02s</code></pre>
+<p>The lifecycle defects above were reproduced separately despite the existing selected tests passing.</p>
+<h2>Reproduction commands and exact results</h2>
+<p>Exact command (same working directory as above):</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python - &lt;&lt;'PY'
+import click
+print('module:', click.__file__)
+events = []
+@click.command()
+@click.pass_context
+def cli(ctx):
+    @ctx.call_on_close
+    def cleanup():
+        events.append('cleanup')
+        raise RuntimeError('cleanup failed')
+    return 7
+try:
+    cli.main([], prog_name='audit', standalone_mode=False)
+except RuntimeError as e:
+    print('cleanup error:', str(e))
+print('cleanup events:', events)
+print('context leaked:', click.get_current_context(silent=True) is not None)
+PY</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">module: /private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src/click/__init__.py
+cleanup error: cleanup failed
+cleanup events: ['cleanup']
+context leaked: True</code></pre>
+<p>Exact command (same working directory as above):</p>
+<pre class="code"><code data-language="sh">env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src /private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python - &lt;&lt;'PY'
+import click
+events = []
+def register(ctx, param, value):
+    if value:
+        events.append('opened')
+        ctx.call_on_close(lambda: events.append('closed'))
+    return value
+@click.command()
+@click.option('--start', is_flag=True, callback=register)
+@click.argument('name')
+def cli(start, name):
+    pass
+try:
+    cli.main(['--start'], prog_name='audit', standalone_mode=False)
+except click.MissingParameter as e:
+    print('parse error:', type(e).__name__)
+print('resource events:', events)
+print('context leaked:', click.get_current_context(silent=True) is not None)
+PY</code></pre>
+<p>Exit code: 0.</p>
+<pre class="code"><code data-language="text">parse error: MissingParameter
+resource events: ['opened']
+context leaked: False</code></pre></section><p class="footer">Offline-readable Markdown: click.md. Diagrams and audit text remain available without fetching CDN scripts. HTML was not opened, and CDN content was not fetched during this audit.</p></main></body></html>
+

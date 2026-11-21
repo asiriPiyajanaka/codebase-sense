@@ -24,9 +24,9 @@ For each candidate ask:
 
 ## Recommendation rules
 
-- **Change:** show specific repeated friction, a stable responsibility, a smaller public contract, protected invariants, and a migration path.
-- **Investigate:** show concrete suspicious evidence but missing callers/tests/constraints. Propose the smallest fact-finding task.
-- **Keep:** existing separation has a meaningful reason, change cost outweighs demonstrated benefit, or the evidence gate fails.
+- **Change:** show concrete friction or a correctness defect, an accountable responsibility, an observable benefit, relevant invariants and a verification/migration path. The smallest change may be a test or local fix; a new module is not required.
+- **Investigate:** a material question about callers, tests, or constraints prevents a supported judgment. State the unknown and the smallest fact-finding task. Do not present suspicion as a proven defect.
+- **Keep:** inspected callers, contracts and constraints support the separation, or inspection finds no benefit sufficient to justify the change cost. State the inspected scope. Do not use this verdict to certify unavailable code.
 
 State expected improvement in *observable terms* — e.g., "callers no longer coordinate update+reward" or "retry invariant has integration coverage" — not an invented architecture score.
 

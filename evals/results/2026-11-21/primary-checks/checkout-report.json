@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.1",
+  "scope": "Checkout fixture; primary-agent final schema check",
+  "mode": "audit",
+  "summary": "Change the local checkout consistency path: observed exact retries duplicate rewards, conflicting payloads are accepted, and reward failure leaves an order.",
+  "workflows": [
+    {
+      "name": "Checkout",
+      "promise": "One payload-bound request records one order and reward together.",
+      "entry_point": "app.py",
+      "trace": [
+        {
+          "path": "app.py",
+          "symbol": "checkout",
+          "role": "validate and sequence writes"
+        },
+        {
+          "path": "store.py",
+          "symbol": "record_order / award_points",
+          "role": "independently commit order and reward"
+        }
+      ],
+      "owner": "app.checkout sequences; store helpers separately own commits; no combined owner exists.",
+      "change_entry_point": "store.py:record_order / award_points",
+      "invariants": [
+        {
+          "statement": "Exact replay creates at most one reward",
+          "status": "violated",
+          "evidence": [
+            {
+              "path": "app.py",
+              "symbol": "checkout",
+              "detail": "Final checkout_probe.py counterexample produced two rewards for one request."
+            }
+          ]
+        },
+        {
+          "statement": "Request identity binds to customer and amount",
+          "status": "violated",
+          "evidence": [
+            {
+              "path": "store.py",
+              "symbol": "record_order",
+              "detail": "Counterexamples accepted changed customer and amount against the original order."
+            }
+          ]
+        },
+        {
+          "statement": "Reward failure leaves neither new order nor reward",
+          "status": "violated",
+          "evidence": [
+            {
+              "path": "store.py",
+              "symbol": "record_order",
+              "detail": "Trigger-induced reward failure left a committed order even after caller rollback."
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        "Production legacy-data migration",
+        "Concurrent requests were not checked in this read-only audit"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "C1",
+      "title": "Own local checkout consistency and request identity",
+      "recommendation": "change",
+      "reason": "All three documented guarantees have concrete counterexamples.",
+      "counterargument": "The existing checkout public function is already narrow; no new public service is needed. Preserve helper clients and establish transaction ownership before moving commits.",
+      "evidence": [
+        {
+          "path": "app.py",
+          "symbol": "checkout"
+        },
+        {
+          "path": "store.py",
+          "symbol": "record_order / award_points"
+        }
+      ],
+      "possible_contract": "Keep checkout(db, request_id, customer, cents) -> {order_id}; let one persistence operation own local atomic writes and exact-retry comparison.",
+      "test_implication": "Real SQLite regression tests should assert rows, response equality, changed-payload rejection and rollback/recovery after injected reward failure.",
+      "next_step": "Add the demonstrated regressions in an explicitly approved disposable copy before implementing."
+    }
+  ],
+  "verification": {
+    "checks": [
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "status": "passed",
+        "details": "Existing suite: 2 passing examples, not a check of the violated guarantees."
+      },
+      {
+        "command": "PYTHONPATH=CASE_ROOT python checkout_probe.py",
+        "status": "passed",
+        "details": "Primary agent reran the saved final-schema probe. It asserts counterexamples; exit zero means failures were reproduced, not that business guarantees passed."
+      }
+    ],
+    "unverified": [
+      "All production environments",
+      "Concurrent behavior in this audit"
+    ]
+  },
+  "next_step": "Change only after explicit implementation authorization; no source files changed in this audit."
+}

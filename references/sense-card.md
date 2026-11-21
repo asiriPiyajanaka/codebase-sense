@@ -7,10 +7,10 @@ SENSE CARD — <capability>
 Scope: <bounded area> | Mode: <audit / plan / implement / review / verify>
 Promise: <observable result>
 Flow: <entrypoint> -> <domain decision> -> <stateful/external effects>
-Owner: <actual or proposed module> | Evidence: <path:symbol / line>
+Owner: <current module; label proposed ownership separately> | Evidence: <path:symbol / line>
 Change entry point: <what to open first if X goes wrong, and why>
 Guarantees:
-  [verified / missing / unknown] <invariant> — <test / code evidence>
+  [verified / violated / missing / unknown] <invariant> — <evidence; command/result if executed>
   ...
 Unknown: <what the inspection did not prove>
 Decision: Change / Investigate / Keep — <reason>
@@ -26,7 +26,7 @@ Flow: LevelController.complete -> Progress.completeLevel -> DB transaction -> re
 Owner: Progress module
 Change entry point: Progress.completeLevel, where completion idempotency is enforced.
 Guarantees:
-  [verified] retry does not duplicate points — test: progress.integration.spec.ts
+  [unknown] retry does not duplicate points — progress.integration.spec.ts exists; not run
   [unknown] DB error cannot leave partial progress — transaction boundary not inspected
 Unknown: multi-device concurrent submissions
 Decision: Investigate — need concurrent-submission test before proposing a refactor.

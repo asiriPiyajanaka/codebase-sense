@@ -1,0 +1,69 @@
+[
+  {
+    "name": "checkout-counterexamples",
+    "cwd": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/final-schema/cases/checkout",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "/private/tmp/codebase-sense-qa-91vasxy9/jobs/final-schema/reports/checkout_probe.py"
+    ],
+    "PYTHONPATH": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/final-schema/cases/checkout",
+    "exit_code": 0
+  },
+  {
+    "name": "authorization-counterexample",
+    "cwd": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/candidate-b/cases/authorization",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "/private/tmp/codebase-sense-qa-91vasxy9/jobs/candidate-b/reports/authorization_probe.py"
+    ],
+    "PYTHONPATH": null,
+    "exit_code": 0
+  },
+  {
+    "name": "click-cleanup",
+    "cwd": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/reports/click-cleanup-probe.py"
+    ],
+    "PYTHONPATH": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src",
+    "exit_code": 0
+  },
+  {
+    "name": "click-parse",
+    "cwd": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/reports/click-parse-probe.py"
+    ],
+    "PYTHONPATH": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/click/src",
+    "exit_code": 0
+  },
+  {
+    "name": "flask-host-failure",
+    "cwd": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tests/test_reqctx.py::test_bad_environ_raises_bad_request"
+    ],
+    "PYTHONPATH": "/private/tmp/codebase-sense-qa-91vasxy9/jobs/reference/cases/flask/src",
+    "exit_code": 1
+  },
+  {
+    "name": "implementation-oracle",
+    "cwd": "/Users/asiripiyajanaka/Workspace/Skills/codebase-sense",
+    "command": [
+      "/private/tmp/codebase-sense-qa-91vasxy9/venv/bin/python",
+      "evals/check_fixtures.py",
+      "--implementation",
+      "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout"
+    ],
+    "PYTHONPATH": null,
+    "exit_code": 0
+  }
+]

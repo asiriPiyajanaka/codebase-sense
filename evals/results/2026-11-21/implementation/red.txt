@@ -1,0 +1,176 @@
+test_atomicity_on_an_autocommit_connection (test_checkout.CheckoutContractTests.test_atomicity_on_an_autocommit_connection) ... FAIL
+test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) ... 
+  test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='bob', cents=500) ... FAIL
+  test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='alice', cents=600) ... FAIL
+  test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='bob', cents=600) ... FAIL
+test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) ... FAIL
+test_checkout_respects_an_existing_caller_transaction (test_checkout.CheckoutContractTests.test_checkout_respects_an_existing_caller_transaction) ... FAIL
+test_concurrent_conflicting_requests_have_one_winner (test_checkout.CheckoutContractTests.test_concurrent_conflicting_requests_have_one_winner) ... FAIL
+test_concurrent_exact_retries_share_one_order_and_reward (test_checkout.CheckoutContractTests.test_concurrent_exact_retries_share_one_order_and_reward) ... FAIL
+test_conflict_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_conflict_preserves_uncommitted_caller_work) ... FAIL
+test_exact_retry_returns_original_response_without_extra_rewards (test_checkout.CheckoutContractTests.test_exact_retry_returns_original_response_without_extra_rewards) ... FAIL
+test_existing_validation_rejects_invalid_input_without_effects (test_checkout.CheckoutContractTests.test_existing_validation_rejects_invalid_input_without_effects) ... ok
+test_response_shape_order_ids_and_reward_rounding (test_checkout.CheckoutContractTests.test_response_shape_order_ids_and_reward_rounding) ... ok
+test_reward_failure_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_reward_failure_preserves_uncommitted_caller_work) ... FAIL
+test_reward_failure_rolls_back_and_allows_same_id_recovery (test_checkout.CheckoutContractTests.test_reward_failure_rolls_back_and_allows_same_id_recovery) ... FAIL
+test_success_is_durable_without_a_caller_transaction (test_checkout.CheckoutContractTests.test_success_is_durable_without_a_caller_transaction) ... ok
+test_invalid_input_has_no_effects (test_checkout.CheckoutTests.test_invalid_input_has_no_effects) ... ok
+test_success (test_checkout.CheckoutTests.test_success) ... ok
+
+======================================================================
+FAIL: test_atomicity_on_an_autocommit_connection (test_checkout.CheckoutContractTests.test_atomicity_on_an_autocommit_connection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 175, in test_atomicity_on_an_autocommit_connection
+    self.assertEqual(db.execute("SELECT * FROM orders").fetchall(), [])
+AssertionError: Lists differ: [(1, 'r1', 'alice', 500)] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+(1, 'r1', 'alice', 500)
+
+- [(1, 'r1', 'alice', 500)]
++ []
+
+======================================================================
+FAIL: test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='bob', cents=500)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 103, in test_changed_payload_is_rejected_without_state_changes
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='alice', cents=600)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 103, in test_changed_payload_is_rejected_without_state_changes
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) (customer='bob', cents=600)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 103, in test_changed_payload_is_rejected_without_state_changes
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 107, in test_changed_payload_is_rejected_without_state_changes
+    self.assertEqual(self.snapshot(), original_state)
+AssertionError: Tuples differ: ([(1, 'r1', 'alice', 500)], [(1, 5), (1, 5), (1, 6), (1, 6), (1, 5)]) != ([(1, 'r1', 'alice', 500)], [(1, 5)])
+
+First differing element 1:
+[(1, 5), (1, 5), (1, 6), (1, 6), (1, 5)]
+[(1, 5)]
+
+- ([(1, 'r1', 'alice', 500)], [(1, 5), (1, 5), (1, 6), (1, 6), (1, 5)])
++ ([(1, 'r1', 'alice', 500)], [(1, 5)])
+
+======================================================================
+FAIL: test_checkout_respects_an_existing_caller_transaction (test_checkout.CheckoutContractTests.test_checkout_respects_an_existing_caller_transaction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 131, in test_checkout_respects_an_existing_caller_transaction
+    self.assertTrue(self.db.in_transaction)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_concurrent_conflicting_requests_have_one_winner (test_checkout.CheckoutContractTests.test_concurrent_conflicting_requests_have_one_winner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 225, in test_concurrent_conflicting_requests_have_one_winner
+    self.assertEqual(successes, [{"order_id": 1}])
+AssertionError: Lists differ: [{'order_id': 1}, {'order_id': 1}] != [{'order_id': 1}]
+
+First list contains 1 additional elements.
+First extra element 1:
+{'order_id': 1}
+
+- [{'order_id': 1}, {'order_id': 1}]
++ [{'order_id': 1}]
+
+======================================================================
+FAIL: test_concurrent_exact_retries_share_one_order_and_reward (test_checkout.CheckoutContractTests.test_concurrent_exact_retries_share_one_order_and_reward)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 219, in test_concurrent_exact_retries_share_one_order_and_reward
+    self.assertEqual(state, ([(1, "r1", "alice", 500)], [(1, 5)]))
+AssertionError: Tuples differ: ([(1, 'r1', 'alice', 500)], [(1, 5), (1, 5)]) != ([(1, 'r1', 'alice', 500)], [(1, 5)])
+
+First differing element 1:
+[(1, 5), (1, 5)]
+[(1, 5)]
+
+- ([(1, 'r1', 'alice', 500)], [(1, 5), (1, 5)])
+?                                  --------
+
++ ([(1, 'r1', 'alice', 500)], [(1, 5)])
+
+======================================================================
+FAIL: test_conflict_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_conflict_preserves_uncommitted_caller_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 140, in test_conflict_preserves_uncommitted_caller_work
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_exact_retry_returns_original_response_without_extra_rewards (test_checkout.CheckoutContractTests.test_exact_retry_returns_original_response_without_extra_rewards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 96, in test_exact_retry_returns_original_response_without_extra_rewards
+    self.assertEqual(self.snapshot(), original_state)
+AssertionError: Tuples differ: ([(1, 'r1', 'alice', 500), (2, 'other', 'bob', 700)], [(1, 5), (2, 7), (1, 5)]) != ([(1, 'r1', 'alice', 500), (2, 'other', 'bob', 700)], [(1, 5), (2, 7)])
+
+First differing element 1:
+[(1, 5), (2, 7), (1, 5)]
+[(1, 5), (2, 7)]
+
+- ([(1, 'r1', 'alice', 500), (2, 'other', 'bob', 700)], [(1, 5), (2, 7), (1, 5)])
+?                                                                     --------
+
++ ([(1, 'r1', 'alice', 500), (2, 'other', 'bob', 700)], [(1, 5), (2, 7)])
+
+======================================================================
+FAIL: test_reward_failure_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_reward_failure_preserves_uncommitted_caller_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 159, in test_reward_failure_preserves_uncommitted_caller_work
+    self.assertEqual(self.snapshot(), original_state)
+AssertionError: Tuples differ: ([(1, 'pending', 'bob', 300), (2, 'r1', 'alice', 500)], []) != ([(1, 'pending', 'bob', 300)], [])
+
+First differing element 0:
+[(1, 'pending', 'bob', 300), (2, 'r1', 'alice', 500)]
+[(1, 'pending', 'bob', 300)]
+
+- ([(1, 'pending', 'bob', 300), (2, 'r1', 'alice', 500)], [])
++ ([(1, 'pending', 'bob', 300)], [])
+
+======================================================================
+FAIL: test_reward_failure_rolls_back_and_allows_same_id_recovery (test_checkout.CheckoutContractTests.test_reward_failure_rolls_back_and_allows_same_id_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/codebase-sense-qa-91vasxy9/jobs/implementation/cases/checkout/tests/test_checkout.py", line 118, in test_reward_failure_rolls_back_and_allows_same_id_recovery
+    self.assertEqual(self.snapshot(), ([], []))
+AssertionError: Tuples differ: ([(1, 'r1', 'alice', 500)], []) != ([], [])
+
+First differing element 0:
+[(1, 'r1', 'alice', 500)]
+[]
+
+- ([(1, 'r1', 'alice', 500)], [])
++ ([], [])
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.012s
+
+FAILED (failures=12)

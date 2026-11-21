@@ -1,0 +1,3 @@
+checkout: python -c <independent oracle>
+checkout independent retry/conflict/rollback assertions passed
+

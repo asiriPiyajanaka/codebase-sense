@@ -1,0 +1,5 @@
+EXACT RETRY: responses={'order_id': 1}, {'order_id': 1}; orders=[('alice', 500)]; rewards=[(5,), (5,)]
+CONFLICT ACCEPTED: retry_payload=('alice', 1500); response={'order_id': 1}; orders=[('alice', 500)]; rewards=[(5,), (15,)]
+CONFLICT ACCEPTED: retry_payload=('bob', 500); response={'order_id': 1}; orders=[('alice', 500)]; rewards=[(5,), (5,)]
+PARTIAL COMMIT: error='reward rejected'; orders_after_rollback=[('alice', 500)]; rewards=[]
+PASS: counterexamples reproduced; intended retry and atomicity guarantees are violated.

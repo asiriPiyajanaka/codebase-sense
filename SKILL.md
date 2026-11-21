@@ -1,9 +1,9 @@
 ---
 name: codebase-sense
-description: Preserve an engineer's understanding of a changing codebase. Use to map a feature's real behavior and ownership, investigate shallow or over-coupled modules, plan evidence-backed deep-module refactors, verify behavioral tests, or review agent-generated PRs for architectural drift. Default to a read-only audit; make code changes only when explicitly requested. Not for generic formatting or simple one-file edits.
+description: Trace codebase workflows, ownership, contracts, and behavioral guarantees so engineers stay oriented as agents implement changes. Use for architecture audits, refactor planning, verification, and architectural PR review. Recommend changes only with evidence; a justified no-change outcome is valid. Default to read-only analysis. Not for formatting or simple isolated edits.
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.2.0-rc.1"
 ---
 
 # Codebase Sense
@@ -20,19 +20,19 @@ Interpret the user's intent; do not expand it:
 | `codebase-sense plan [area]`, "design a refactor" | **plan** | No, unless asked for an RFC file |
 | `codebase-sense implement [area]`, "apply the refactor" | **implement** | Yes, within approved scope |
 | `codebase-sense review [diff or PR]`, "review AI-generated changes" | **review** | No |
-| `codebase-sense verify [area]` | **verify** | No, except generated test artifacts if explicitly asked |
+| `codebase-sense verify [area]` | **verify** | No source/configuration changes; safe local check artifacts only |
 
 When unclear, use **sense + audit**, never automatic refactoring. A PR review is a review, not permission to fix code. State the scope and chosen mode at the start.
 
 ## Shared operating rules
 
 1. Read repository-specific instructions (`AGENTS.md`, equivalent), module docs, domain glossary and relevant ADRs. Respect prior architecture decisions; note contradictions rather than silently replacing them.
-2. Inspect the current working tree before touching files. Do not reset, clean, rebase, delete unrelated work, install tools, publish, open issues, or contact external services without explicit authorization. Avoid commands with side effects in audit/review modes; read-only git inspection is acceptable if available.
+2. Inspect the working tree and preserve unrelated work. Audit, plan, review, and verify do not authorize source, test, documentation, dependency, or configuration edits. Existing local checks may run after inspecting their setup and side effects; normal temporary test artifacts are acceptable. Do not run checks against live services, migrate data, install tools, publish, or open issues without authorization. Honor existing explicit approval rather than asking for it again.
 3. Anchor claims to **actual repository evidence**: `path:symbol` and line number when available, relevant callers, tests, or a reproduced failure. Mark deductions *inferred* and gaps *unknown*. Never claim code was run if it was not.
-4. Prioritize a **single user-visible workflow**, bounded by the user's requested area. Prefer recent change hotspots only when git history is available and relevant. Do not scan an entire monorepo by default.
+4. Start with a **single user-visible workflow**, bounded by the requested area. If the user explicitly requests broader coverage, map the areas and inspect representative workflows; state coverage limits. Prefer recent change hotspots only when git history is available and relevant. Do not scan an entire monorepo by default.
 5. Consider security, privacy, authorization, idempotency, transactions, concurrency, error semantics, data integrity, performance, and compatibility as applicable; do not invent requirements.
 6. **A deep module hides difficult decisions behind a simple contract.** More files, fewer files, more classes, or fewer classes are not goals. Don't create a "god module" or collapse genuine independently evolving responsibilities.
-7. Some code should remain as-is. Always give a reasoned **keep / investigate / change** outcome; weak evidence means `investigate`, not a confident refactor proposal.
+7. Some code should remain as-is. Use **keep** when inspected evidence supports the present design or shows no worthwhile change; **investigate** when a material unknown prevents judgment; **change** when a concrete benefit justifies the cost. Missing evidence proves neither a defect nor a sound design.
 
 ## Sense pass: trace before judging
 
@@ -40,8 +40,8 @@ For the one workflow, construct an evidence-based **Sense Card**:
 
 - **Promise:** What can the user or caller expect to happen?
 - **Entry -> decisions -> effects:** Trace the real path through the code. Separate external I/O from domain rules.
-- **Owner:** Which module should be accountable for the workflow's consistency? State if ownership is split or uncertain.
-- **Invariants:** What must stay true across failure, retries, and edge cases? Link to existing evidence/tests and mark each `verified`, `missing`, or `unknown`.
+- **Owner:** Which module actually owns each guarantee? Separate current ownership from any proposed owner; intentional coordination across modules can be appropriate.
+- **Invariants:** What must stay true across failure, retries, and edge cases? Link to evidence/tests. `verified` means a relevant check actually passed in this run or an identified prior run whose result is available; include the command, result, and tested boundary. Code inspection or the existence of a test alone is not runtime verification. Use `violated` for an observed counterexample, `missing` for a demonstrated coverage gap, and `unknown` for unrun checks or incomplete inspection. A reproduced defect verifies the counterexample, not the intended guarantee.
 - **Change entry point:** If a bug or rule change landed tomorrow, where should an engineer look first and why?
 - **Unknowns:** Say what could not be established without further inspection or execution.
 
@@ -49,7 +49,7 @@ Load `references/sense-card.md` for the output structure. Keep the result short 
 
 ## Audit: recommend changes only where they pay off
 
-Inspect only proven friction around the workflow:
+Look for friction around the workflow, then test each suspicion against callers and constraints:
 
 - Does a caller have to orchestrate steps that should be atomic within one capability?
 - Does understanding or modifying one domain rule require crossing many unrelated modules?
@@ -58,6 +58,8 @@ Inspect only proven friction around the workflow:
 - Do tests assert mocked calls while the workflow's real invariants are unprotected?
 
 Read `references/decision-rubric.md`. For at most **three candidates**, show observed friction with evidence, a counterexample or reason to keep the design, possible contract, risks, test implications, and a `change / investigate / keep` recommendation. Do not assign invented numeric complexity scores. If nothing merits refactoring, say so.
+
+Existing tests, a targeted test addition, deleting a redundant wrapper, or clearer documentation may be the smallest useful outcome. Do not infer that a coordination defect requires a new service, or that local database transactions make remote effects atomic. A retry key must bind to the same payload; consider conflicting retries as well as exact duplicates where relevant.
 
 **Stop after audit or plan unless implementation was explicitly requested.** Do not make a code change just because you identified a candidate.
 
@@ -89,6 +91,10 @@ Only enter when the user explicitly asked to change the code.
 
 For a supplied diff or PR, trace each changed public behavior to its callers, contracts, and tests. Prioritize genuine correctness and maintainability risks over style. Report each finding with severity, path/line evidence, how to reproduce or observe it, and what guarantee is at risk. Include **what remains understandable**, meaningful unknowns, and a concise updated Sense Card. Don't claim full repository coverage from a small diff. Read `references/review-checklist.md`.
 
+## Verify: establish what the checks prove
+
+Identify the requested guarantee, its existing checks, and the boundary those checks exercise. Read the repository's test configuration before running the smallest relevant safe check. Record the exact command, exit/result, and any pre-existing failure or missing environment. A failed harness or absent dependency leaves the guarantee unverified; do not replace infrastructure with mocks, skip checks to get green, or edit configuration. Distinguish tests that exist from tests that ran, and passing examples from proof of every failure or concurrency case. If runtime checks cannot run safely, inspect the available code and report the blocker with the smallest next action.
+
 ## Output / evidence quality gate
 
 Always finish with:
@@ -97,6 +103,8 @@ Always finish with:
 2. `Change`, `Investigate`, or `Keep`, and why.
 3. Behavioral guarantees that were actually checked vs. not checked.
 4. The next smallest justified action, or "No change recommended."
+
+Use one card and expand only the findings that need explanation. Avoid repeating the same trace, guarantees, and next action in several sections; record commands/results once. Scale detail to the requested decision, not the number of templates available.
 
 **Evidence gate:** If you cannot identify a real caller, a real behavior, and at least one concrete risk or invariant, do not confidently propose a refactor. If proposed work increases the number of concepts callers must understand without a clear payback, reject or revise it.
 

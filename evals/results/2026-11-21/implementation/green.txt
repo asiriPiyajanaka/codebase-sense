@@ -1,0 +1,19 @@
+test_atomicity_on_an_autocommit_connection (test_checkout.CheckoutContractTests.test_atomicity_on_an_autocommit_connection) ... ok
+test_changed_payload_is_rejected_without_state_changes (test_checkout.CheckoutContractTests.test_changed_payload_is_rejected_without_state_changes) ... ok
+test_checkout_respects_an_existing_caller_transaction (test_checkout.CheckoutContractTests.test_checkout_respects_an_existing_caller_transaction) ... ok
+test_concurrent_conflicting_requests_have_one_winner (test_checkout.CheckoutContractTests.test_concurrent_conflicting_requests_have_one_winner) ... ok
+test_concurrent_exact_retries_share_one_order_and_reward (test_checkout.CheckoutContractTests.test_concurrent_exact_retries_share_one_order_and_reward) ... ok
+test_conflict_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_conflict_preserves_uncommitted_caller_work) ... ok
+test_exact_retry_returns_original_response_without_extra_rewards (test_checkout.CheckoutContractTests.test_exact_retry_returns_original_response_without_extra_rewards) ... ok
+test_existing_validation_rejects_invalid_input_without_effects (test_checkout.CheckoutContractTests.test_existing_validation_rejects_invalid_input_without_effects) ... ok
+test_response_shape_order_ids_and_reward_rounding (test_checkout.CheckoutContractTests.test_response_shape_order_ids_and_reward_rounding) ... ok
+test_reward_failure_preserves_uncommitted_caller_work (test_checkout.CheckoutContractTests.test_reward_failure_preserves_uncommitted_caller_work) ... ok
+test_reward_failure_rolls_back_and_allows_same_id_recovery (test_checkout.CheckoutContractTests.test_reward_failure_rolls_back_and_allows_same_id_recovery) ... ok
+test_success_is_durable_without_a_caller_transaction (test_checkout.CheckoutContractTests.test_success_is_durable_without_a_caller_transaction) ... ok
+test_invalid_input_has_no_effects (test_checkout.CheckoutTests.test_invalid_input_has_no_effects) ... ok
+test_success (test_checkout.CheckoutTests.test_success) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.008s
+
+OK
